@@ -36,7 +36,6 @@
 	extends Exception {
 		
 	}
-	
 
     class cli {
         /* Constants */
@@ -110,7 +109,7 @@
         protected $_autoloadOpts = array('pre' => NULL, 'post' => '.class', 'ext' => '.php');
         protected $_verbose      = FALSE; // Defaults to false. This will add a 'verbose' and 'v' option to the extended options. - IF v or verbose is one of the list of options, then the code will not over ride that.
         protected $_help         = array();
-        protected $_process      = FALSE; // Process is the variable that is used to enable startProcess and endProcess.
+		protected $_optionFile   = array('file_loc' => NULL, 'parse_type' => 'INI');
         protected $_script;
 
         /* Public Variables */
@@ -163,6 +162,29 @@
         public function print_dump($msg) {
             echo var_export($msg, true) . "\n";
         }
+		
+		/* print_exception(cliException $e, $die) will print the exception error, formatted for the commandline.
+		 *
+		 * @param cliException $e The cliException object
+		 * @param bool $die Will kill the script after printing the exception.
+		 * @return void Prints the exception to the command line.
+		 */
+		public function print_exception(cliException $e, $die = TRUE) {
+			$this->print_line('cliException Thrown');
+			$this->print_line($e->getCode() . ' - ' . $e->getMessage());
+			$this->print_line('File: ' . $e->getFile() . '[' . $e->getLine() .']');
+			$this->print_line('');
+			
+			foreach($e->getTrace() as $tid => $trace_line) {
+				$this->print_line($tid . ' ' . $trace_line);
+			}
+			
+			if($die) {
+				die();
+			}
+			
+			return $this;
+		}
 
         /* print_help prints out a nicely formatted help message with the description in the options array.
          *
@@ -267,6 +289,79 @@
                 $this->print_line($msg);
             }
         }
+		
+		/* setOptFile() is where the system options can use defaults before loading the major code for the system.
+		 * *NOTE* Since this is for the options, only single-dimension arrays are allowed.
+		 *
+		 * @param string $file_loc The option file location
+		 * @param string $parse_type The parse type of the option file. (Currently Supporting ini and JSON).
+		 * @param bool   $autoload This will autoload the options into the options array. (Default is TRUE)
+		 */
+		public function setOptFile($file_loc, $parse_type, $autoload = TRUE) {
+			$this->_optionFile['file_loc'] = $file_loc;
+			$this->_optionFile['parse_type'] = $parse_type;
+			
+			if($autoload === TRUE) {
+				$this->loadOpts();
+			}
+			return $this;
+		}
+		
+		/* loadOpts() is the way to load in options from an options ini or json file. */
+		public function loadOpts() {
+			if(!is_file($this->_optionFile['file_loc'])) {
+				// This file does not exist. Skip.
+				return FALSE;
+			}
+			
+			switch(strtolower($this->_optionFile['parse_type'])) {
+				case 'ini':
+					$opt_arr = parse_ini_file($this->_optionFile['file_loc']);
+					break;
+				
+				case 'json':
+					$file_contents = file_get_contents($this->_optionFile['file_loc']);
+					$opt_arr = json_decode($file_contents, TRUE);
+					unset($file_contents);
+					break;
+			}
+			
+			foreach($opt_arr as $option => $value) {
+				if(!$this->opt($option)) { // Only add in the values that were not specified in the array.
+					$this->_options[$option] = $value;
+				}
+			}
+			unset($opt_arr);
+			
+			return $this;
+		}
+		
+		/* saveOpts($opts, $update) will save the options that are set in the class to the option file that was set with setOptFile();
+		 *
+		 * @param mixed $opts A (Comma Separated) list or array of the options to save.
+		 * @param bool $update This will force an update on the file, if the file exists.
+		 */
+		public function saveOpts($opts, $update = FALSE) {
+			if((is_file($this->_optionFile['file_loc']) && $update == TRUE)
+			   || (!is_file($this->_optionFile['file_loc']))) {
+				if(is_string($opts)) {
+					$options = explode(',', $opts);
+				} elseif(is_array($opts)) {
+					$options = $opts;
+				}
+				
+				$out = array();
+				foreach($options AS $optval) {
+					if($this->opt($optval)) {
+						$out[] = $optval . '=' . $this->opt($optval, TRUE);
+					}
+				}
+				
+				return file_put_contents($this->_optionFile['file_loc'], implode("\r\n", $out));
+			}
+			
+			return FALSE;
+		}
 
         /* __construct sets up the cli object for running.
          * The options array is setup as such: array('<option>' => '<description>'); - <description> can be NULL
