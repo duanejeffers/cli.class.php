@@ -351,13 +351,27 @@
 				}
 				
 				$out = array();
-				foreach($options AS $optval) {
-					if($this->opt($optval)) {
-						$out[] = $optval . '=' . $this->opt($optval, TRUE);
-					}
+				switch(strtolower($this->_optionFile['parse_type'])) {
+					case 'ini':
+						foreach($options AS $optval) {
+							if($this->opt($optval)) {
+								$out[] = $optval . '=' . $this->opt($optval, TRUE);
+							}
+						}
+						$output = implode("\r\n", $out);
+						break;
+					
+					case 'json':
+						foreach($options as $optval) {
+							if($this->opt($optval)) {
+								$out[$optval] = $this->opt($optval, TRUE);
+							}
+						}
+						
+						$output = json_encode($out);
+						break;
 				}
-				
-				return file_put_contents($this->_optionFile['file_loc'], implode("\r\n", $out));
+					return file_put_contents($this->_optionFile['file_loc'], $output);
 			}
 			
 			return FALSE;
