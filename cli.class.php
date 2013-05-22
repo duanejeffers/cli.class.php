@@ -89,6 +89,19 @@
             $ret_string .= $string . "\033[0m";
             return $ret_string;
         }
+		
+		/* usr_home_dir() is a static function that helps get the user directory on *nix and Windows Systems.
+		 * @return string The running user's home directory.
+		 */
+		public static function usr_home_dir() {
+			// Find windows home directory first.
+			$home_dir = getenv('HOMEDRIVE').getenv('HOMEPATH').'//';
+			if($home_dir == '//') {
+				$home_dir = getenv('HOME') . '/';
+			}
+			
+			return $home_dir;
+		}
 
         /* Private Variables */
 
