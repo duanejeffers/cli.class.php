@@ -1,4 +1,6 @@
 {
 	"name":"duanejeffers/cli.class.php",
-	"version":"0.1"
+	"description":"Simple object for creating CLI programs in PHP",
+	"version":"0.1",
+	"license":"MIT",
 }
