@@ -128,6 +128,23 @@
         }
 
         /* Public Functions */
+		
+		public function read_stdin($single_line = TRUE) {
+			$fp = fopen('php://stdin', 'r');
+			
+			if($single_line) {
+				stream_set_blocking($fp, 1);
+				$output = trim(fgets($fp));
+			} else {
+				stream_set_blocking($fp, 0);
+				$output = array();
+				while($line = fgets($fp)) {
+					$output[] = $line;
+				}
+			}
+			
+			return $output;
+		}
 
         /* opt() will check to see if the option was called.
          *
@@ -184,6 +201,14 @@
 			}
 			
 			return $this;
+		}
+		
+		public function print_read($msg) {
+			echo $msg . ' ';
+			
+			$read = $this->read_stdin(TRUE);
+			
+			return $read;
 		}
 
         /* print_help prints out a nicely formatted help message with the description in the options array.
