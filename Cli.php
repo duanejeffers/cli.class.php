@@ -30,14 +30,8 @@
      * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
      * THE SOFTWARE.
      **/
-
-	// cliException is only for displaying the errors on the commandline.
-	class cliException
-	extends Exception {
-		
-	}
-
-    class cli {
+	
+    class Cli {
         /* Constants */
         /* Output Color Constants */
         const ColorFgBlack    = '0;30';
@@ -180,14 +174,14 @@
             echo var_export($msg, true) . "\n";
         }
 		
-		/* print_exception(cliException $e, $die) will print the exception error, formatted for the commandline.
+		/* print_exception(Exception $e, $die) will print the exception error, formatted for the commandline.
 		 *
-		 * @param cliException $e The cliException object
+		 * @param Exception $e The Exception object
 		 * @param bool $die Will kill the script after printing the exception.
 		 * @return void Prints the exception to the command line.
 		 */
-		public function print_exception(cliException $e, $die = TRUE) {
-			$this->print_line('cliException Thrown');
+		public function print_exception(Exception $e, $die = TRUE) {
+			$this->print_line('Exception Thrown');
 			$this->print_line($e->getCode() . ' - ' . $e->getMessage());
 			$this->print_line('File: ' . $e->getFile() . '[' . $e->getLine() .']');
 			$this->print_line('');
