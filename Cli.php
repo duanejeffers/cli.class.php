@@ -100,7 +100,7 @@
 
         /* Protected Variables */
         protected $_options      = array();
-        protected $_autoloadOpts = array('pre' => NULL, 'post' => '.class', 'ext' => '.php');
+        protected $_autoloadOpts = array('ext' => '.php');
         protected $_verbose      = FALSE; // Defaults to false. This will add a 'verbose' and 'v' option to the extended options. - IF v or verbose is one of the list of options, then the code will not over ride that.
         protected $_help         = array();
 		protected $_optionFile   = array('file_loc' => NULL, 'parse_type' => 'INI');
@@ -117,7 +117,7 @@
          * @param string $class The class name to pass to the include.
          */
         protected function _autoload($class) {
-            $inc_file = $this->_autoloadOpts['pre'] . $class . $this->_autoloadOpts['post'] . $this->_autoloadOpts['ext'];
+            $inc_file = $class . $this->_autoloadOpts['ext'];
             include $inc_file;
         }
 
@@ -288,12 +288,10 @@
 
         /* autoload sets up the cli object as an autoloader.
          *
-         * @param string $post The postfix for the class file name. DEFAULT: '.class'
-         * @param string $pre The prefix for the class file name. DEFAULT: NULL
          * @param string $ext The include extension. Useful for adding: '.inc.php' DEFAULT: '.php'
          */
-        public function autoload($post = '.class', $pre = NULL, $ext = '.php') {
-            $this->autoload = array('post' => $post, 'pre' => $pre, 'ext' => $ext);
+        public function autoload($ext = '.php') {
+            $this->autoload = array('ext' => $ext);
             spl_autoload_register(array($this, '_autoload'));
 
             return $this;
