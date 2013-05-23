@@ -1,7 +1,14 @@
 {
 	"name":"duanejeffers/cli.class.php",
 	"description":"Simple object for creating CLI programs in PHP",
-	"author":"Duane Jeffers",
+	"authors":[
+		{
+			"name":"Duane Jeffers",
+			"email":"duane@duanejeffers.com",
+			"homepage":"http://duanejeffers.com/",
+			"role":"Developer"
+		}
+	],
 	"version":"0.1",
 	"license":"MIT"
 }
