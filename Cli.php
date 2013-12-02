@@ -204,6 +204,11 @@
 			
 			return $read;
 		}
+		
+		public function print_exit($msg) {
+            $this->print_line($msg);
+            die();
+        }
 
         /* print_help prints out a nicely formatted help message with the description in the options array.
          *
@@ -304,6 +309,12 @@
         public function verbose($msg) {
             if($this->_verbose) {
                 $this->print_line($msg);
+            }
+        }
+        
+        public function verbose_dump($obj) {
+            if($this->_verbose) {
+                $this->print_dump($obj);
             }
         }
 		
@@ -439,9 +450,21 @@
 
             return $this;
         }
-
+        
         public function setVerbose($verbose = TRUE) {
             $this->_verbose = $verbose;
             return $this;
+        }
+        
+        /* activeUsr() is a unix function to get the current user of the script. */
+        public function activeUsr() {
+            if(function_exists('exec')) {
+                return exec('whoami');
+            }
+            return FALSE;
+        }
+
+        public function isRoot() {
+            return ($this->activeUsr() === 'root' ? TRUE : FALSE);
         }
     }
