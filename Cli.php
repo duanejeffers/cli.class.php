@@ -1,16 +1,16 @@
 <?php
     /**
-	 * cli.class.php
+     * cli.class.php
      * cli is meant to be a simple include for the commandline.
      * It provides _autoloading functionality for other classes and options handling.
      * You can extend the class or even pass it as a simple cli object.
      *
      * @package cli.class.php
-     * @author Duane Jeffers <duane@jeffe.rs>
+     * @author Duane Jeffers <github@duanejeffers.com>
      * @version 0.1
-     * @copyright Copyright (c) 2012-2013, Duane Jeffers <duane@jeffe.rs>
+     * @copyright Copyright (c) 2012-2015, Duane Jeffers <github@duanejeffers.com>
      *
-     * Copyright (c) 2012-2013 Duane Jeffers <duane@jeffe.rs>
+     * Copyright (c) 2012-2015 Duane Jeffers <github@duanejeffers.com>
      *
      * Permission is hereby granted, free of charge, to any person obtaining a copy
      * of this software and associated documentation files (the "Software"), to deal
@@ -123,22 +123,22 @@
 
         /* Public Functions */
 		
-		public function read_stdin($single_line = TRUE) {
-			$fp = fopen('php://stdin', 'r');
-			
-			if($single_line) {
-				stream_set_blocking($fp, 1);
-				$output = trim(fgets($fp));
-			} else {
-				stream_set_blocking($fp, 0);
-				$output = array();
-				while($line = fgets($fp)) {
-					$output[] = $line;
-				}
+	public function read_stdin($single_line = TRUE) {
+		$fp = fopen('php://stdin', 'r');
+		
+		if($single_line) {
+			stream_set_blocking($fp, 1);
+			$output = trim(fgets($fp));
+		} else {
+			stream_set_blocking($fp, 0);
+			$output = array();
+			while($line = fgets($fp)) {
+				$output[] = $line;
 			}
-			
-			return $output;
 		}
+		
+		return $output;
+	}
 
         /* opt() will check to see if the option was called.
          *
